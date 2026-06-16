@@ -6,9 +6,9 @@ def baldan_qiymet_hesabla(bal):
         # Balı ədədə çeviririk (vergülü nöqtəyə çevirib hesablayırıq)
         b = float(str(bal).replace(',', '.'))
         
-        if b >= 71: return "5"
-        elif b >= 51: return "4"
-        elif b >= 31: return "3"
+        if b >80 : return "5"
+        elif b > 60 : return "4"
+        elif b > 30 : return "3"
         else: return "2"
     except:
         return "2" # Əgər bal oxunmazsa, avtomatik 2 yazır

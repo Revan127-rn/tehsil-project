@@ -3,57 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel Məlumat Sıralayıcı</title>
+    <title>Avtomatlaşdırılmış Hesabat Sistemi</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #e9ecef; 
-            display: flex; justify-content: center; align-items: center; 
-            height: 100vh; margin: 0; 
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px;}
+        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.05); max-width: 600px; width: 100%; }
+        h2 { color: #2c3e50; text-align: center; margin-bottom: 20px;}
+        .flex-row { display: flex; gap: 20px; margin-bottom: 20px;}
+        .flex-col { flex: 1; }
+        
+        /* Drag and Drop qutuları */
+        .drop-zone { 
+            border: 2px dashed #bdc3c7; border-radius: 8px; padding: 30px 20px; 
+            text-align: center; cursor: pointer; transition: 0.3s; background-color: #f8f9fa;
         }
-        .container { 
-            background: white; padding: 40px; border-radius: 12px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; 
-            max-width: 450px; width: 100%; 
-        }
-        h2 { color: #2c3e50; margin-bottom: 5px;}
-        p.desc { color: #7f8c8d; font-size: 14px; margin-bottom: 25px;}
-        label { display: block; margin-top: 15px; text-align: left; font-weight: bold; color: #34495e; font-size: 14px;}
-        input[type="file"], input[type="text"] { 
-            width: 100%; padding: 12px; margin-top: 8px; 
-            border: 1px solid #bdc3c7; border-radius: 6px; 
-            box-sizing: border-box; font-size: 14px;
-        }
-        .info { font-size: 12px; color: #e74c3c; text-align: left; margin-top: 5px; display: block;}
-        .btn-group { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px;}
-        button, a.reset-btn { 
-            padding: 12px 20px; border: none; border-radius: 6px; 
-            cursor: pointer; text-decoration: none; font-size: 15px; font-weight: bold; transition: 0.3s;
-        }
-        .submit-btn { background-color: #27ae60; color: white; flex-grow: 1; }
-        .submit-btn:hover { background-color: #2ecc71; }
-        .reset-btn { background-color: #c0392b; color: white; text-align: center;}
-        .reset-btn:hover { background-color: #e74c3c; }
+        .drop-zone:hover, .drop-zone.dragover { border-color: #3498db; background-color: #ebf5fb; }
+        .drop-zone p { margin: 0; color: #7f8c8d; font-size: 14px; font-weight: bold;}
+        .drop-zone span { display: block; margin-top: 10px; font-size: 12px; color: #e74c3c; word-break: break-all;}
+        input[type="file"] { display: none; } /* Gizledirik, evezine qutu isleyecek */
+
+        label { display: block; margin-top: 15px; font-weight: 600; color: #34495e; font-size: 13px;}
+        input[type="text"] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box;}
+        
+        .btn-group { margin-top: 30px; text-align: center;}
+        button { background-color: #2980b9; color: white; padding: 14px 30px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s;}
+        button:hover { background-color: #2471a3; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>📊 Excel Analizator</h2>
-        <p class="desc">Adları əlifba sırasına salın və rəqəmləri təmizləyin.</p>
+        <h2>📄 Hesabat Birləşdirici</h2>
         
         <form method="POST" enctype="multipart/form-data">
-            <label for="excel_file">1. Kompüterdən Excel faylını seçin:</label>
-            <input type="file" name="excel_file" id="excel_file" accept=".xlsx" required>
+            
+            <div class="flex-row">
+                <div class="flex-col">
+                    <div class="drop-zone" id="excel-zone">
+                        <p>📗 Excel faylını bura at</p>
+                        <span id="excel-name">(və ya kliklə seç)</span>
+                        <input type="file" name="excel_file" id="excel_file" accept=".xlsx" required>
+                    </div>
+                </div>
+                <div class="flex-col">
+                    <div class="drop-zone" id="word-zone">
+                        <p>📘 Word faylını bura at</p>
+                        <span id="word-name">(və ya kliklə seç)</span>
+                        <input type="file" name="word_file" id="word_file" accept=".docx" required>
+                    </div>
+                </div>
+            </div>
 
-            <label for="score_column">2. Sıralanmalı olan sütunun başlığını yazın:</label>
-            <input type="text" name="score_column" id="score_column" placeholder="Məsələn: Rəqəmlər və ya Qiymət" required>
-            <span class="info">*Bura Exceldəki B1, C1 xanasında yazılan dəqiq sözü yazın.</span>
+            <div class="flex-row">
+                <div class="flex-col">
+                    <label>Excel-dəki sütun adı:</label>
+                    <input type="text" name="excel_column" placeholder="Məsələn: Qiymət" required>
+                </div>
+                <div class="flex-col">
+                    <label>Word-dəki fənn adı (B xanası üçün):</label>
+                    <input type="text" name="word_subject" placeholder="Məsələn: Rəqəmsal" required>
+                </div>
+            </div>
 
             <div class="btn-group">
-                <button type="submit" class="submit-btn">⚡ Analiz Et və Yüklə</button>
-                <a href="/" class="reset-btn">🔄 Sıfırla</a>
+                <button type="submit">Word Faylını Yarat və Yüklə</button>
             </div>
         </form>
     </div>
+
+    <script>
+        function setupDropZone(zoneId, inputId, textId) {
+            const dropZone = document.getElementById(zoneId);
+            const inputElement = document.getElementById(inputId);
+            const textElement = document.getElementById(textId);
+
+            dropZone.addEventListener('click', () => inputElement.click());
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    inputElement.files = e.dataTransfer.files;
+                    textElement.innerText = "Yükləndi: " + e.dataTransfer.files[0].name;
+                    textElement.style.color = "#27ae60";
+                }
+            });
+
+            inputElement.addEventListener('change', () => {
+                if (inputElement.files.length) {
+                    textElement.innerText = "Yükləndi: " + inputElement.files[0].name;
+                    textElement.style.color = "#27ae60";
+                }
+            });
+        }
+
+        setupDropZone('excel-zone', 'excel_file', 'excel-name');
+        setupDropZone('word-zone', 'word_file', 'word-name');
+    </script>
 </body>
 </html>

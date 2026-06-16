@@ -13,22 +13,31 @@ def index():
             word_fayli = request.files['word_file']
             excel_basliq = request.form['excel_column']
             word_fenn = request.form['word_subject']
+            
+            # Formdan yeni faylın adını alırıq
+            yeni_fayl_adi = request.form.get('output_filename', '').strip()
+            
+            # Əgər istifadəçi adı boş qoyarsa, standart ad veririk
+            if not yeni_fayl_adi:
+                yeni_fayl_adi = "Yeni_Hesabat"
+                
+            # Fayl adının sonuna .docx artırıldığından əmin oluruq
+            if not yeni_fayl_adi.endswith('.docx'):
+                yeni_fayl_adi += ".docx"
 
             if not excel_fayli or not word_fayli:
                 return "Hər iki fayl yüklənməlidir!", 400
 
-            # 1. Excel-dən balları çıxarırıq (əlifba ilə düzülmüş və temizlenmiş)
+            # Məlumatları çıxarır və doldururuq
             hazir_ballar = ballari_cixar(excel_fayli, excel_basliq)
-
-            # 2. Word faylını yeniləyirik
             yenilenmis_word = word_faylini_doldur(word_fayli, word_fenn, hazir_ballar)
 
-            # 3. Yalnız yeni Word faylını kompüterə yükləmək üçün hazırlayırıq
             output = io.BytesIO()
             yenilenmis_word.save(output)
             output.seek(0)
 
-            return send_file(output, download_name="Yeni_Hesabat.docx", as_attachment=True)
+            # download_name hissəsini istifadəçinin yazdığı ad ilə dəyişdik
+            return send_file(output, download_name=yeni_fayl_adi, as_attachment=True)
 
         except Exception as e:
             return f"Sistem xətası baş verdi: {str(e)}", 500

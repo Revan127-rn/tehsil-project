@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Məlumat Sıralayıcı</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #e9ecef; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; margin: 0; 
+        }
+        .container { 
+            background: white; padding: 40px; border-radius: 12px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center; 
+            max-width: 450px; width: 100%; 
+        }
+        h2 { color: #2c3e50; margin-bottom: 5px;}
+        p.desc { color: #7f8c8d; font-size: 14px; margin-bottom: 25px;}
+        label { display: block; margin-top: 15px; text-align: left; font-weight: bold; color: #34495e; font-size: 14px;}
+        input[type="file"], input[type="text"] { 
+            width: 100%; padding: 12px; margin-top: 8px; 
+            border: 1px solid #bdc3c7; border-radius: 6px; 
+            box-sizing: border-box; font-size: 14px;
+        }
+        .info { font-size: 12px; color: #e74c3c; text-align: left; margin-top: 5px; display: block;}
+        .btn-group { display: flex; justify-content: space-between; margin-top: 30px; gap: 15px;}
+        button, a.reset-btn { 
+            padding: 12px 20px; border: none; border-radius: 6px; 
+            cursor: pointer; text-decoration: none; font-size: 15px; font-weight: bold; transition: 0.3s;
+        }
+        .submit-btn { background-color: #27ae60; color: white; flex-grow: 1; }
+        .submit-btn:hover { background-color: #2ecc71; }
+        .reset-btn { background-color: #c0392b; color: white; text-align: center;}
+        .reset-btn:hover { background-color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📊 Excel Analizator</h2>
+        <p class="desc">Adları əlifba sırasına salın və rəqəmləri təmizləyin.</p>
+        
+        <form method="POST" enctype="multipart/form-data">
+            <label for="excel_file">1. Kompüterdən Excel faylını seçin:</label>
+            <input type="file" name="excel_file" id="excel_file" accept=".xlsx" required>
+
+            <label for="score_column">2. Sıralanmalı olan sütunun başlığını yazın:</label>
+            <input type="text" name="score_column" id="score_column" placeholder="Məsələn: Rəqəmlər və ya Qiymət" required>
+            <span class="info">*Bura Exceldəki B1, C1 xanasında yazılan dəqiq sözü yazın.</span>
+
+            <div class="btn-group">
+                <button type="submit" class="submit-btn">⚡ Analiz Et və Yüklə</button>
+                <a href="/" class="reset-btn">🔄 Sıfırla</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -36,8 +36,24 @@ def index():
 
             df[score_column] = df[score_column].apply(clean_score)
 
-            # 5. Adlara görə əlifba sırası ilə düzürük
-            df_sorted = df.sort_values(by=name_col)
+           
+            # 5. Azərbaycan əlifbasına görə sıralamaq üçün xüsusi lüğət
+            az_alphabet = {
+                'a':'01', 'b':'02', 'c':'03', 'ç':'04', 'd':'05', 'e':'06', 'ə':'07', 
+                'f':'08', 'g':'09', 'ğ':'10', 'h':'11', 'x':'12', 'ı':'13', 'i':'14', 
+                'j':'15', 'k':'16', 'q':'17', 'l':'18', 'm':'19', 'n':'20', 'o':'21', 
+                'ö':'22', 'p':'23', 'r':'24', 's':'25', 'ş':'26', 't':'27', 'u':'28', 
+                'ü':'29', 'v':'30', 'y':'31', 'z':'32'
+            }
+
+            def az_sort_key(series):
+                def map_string(s):
+                    # Hər bir hərfi az_alphabet lüğətindəki rəqəmlə əvəzləyirik (Məsələn: 'Ə' -> '07')
+                    return "".join([az_alphabet.get(char.lower(), char) for char in str(s)])
+                return series.map(map_string)
+
+            # Adları xüsusi Azərbaycan əlifbası funksiyasına (az_sort_key) əsasən sıralayırıq
+            df_sorted = df.sort_values(by=name_col, key=az_sort_key)
 
             # 6. Yalnız lazım olan 2 sütunu (Adlar və Təmizlənmiş Rəqəmlər) saxlayırıq
             df_final = df_sorted[[name_col, score_column]]

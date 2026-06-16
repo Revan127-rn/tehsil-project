@@ -19,7 +19,7 @@
         .drop-zone:hover, .drop-zone.dragover { border-color: #3498db; background-color: #ebf5fb; }
         .drop-zone p { margin: 0; color: #7f8c8d; font-size: 14px; font-weight: bold;}
         .drop-zone span { display: block; margin-top: 10px; font-size: 12px; color: #e74c3c; word-break: break-all;}
-        input[type="file"] { display: none; } /* Gizledirik, evezine qutu isleyecek */
+        input[type="file"] { display: none; }
 
         label { display: block; margin-top: 15px; font-weight: 600; color: #34495e; font-size: 13px;}
         input[type="text"] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box;}
@@ -34,7 +34,6 @@
         <h2>📄 Hesabat Birləşdirici</h2>
         
         <form method="POST" enctype="multipart/form-data">
-            
             <div class="flex-row">
                 <div class="flex-col">
                     <div class="drop-zone" id="excel-zone">
@@ -63,6 +62,13 @@
                 </div>
             </div>
 
+            <div class="flex-row">
+                <div class="flex-col">
+                    <label>Yüklənəcək yeni faylın adı:</label>
+                    <input type="text" name="output_filename" placeholder="Məsələn: 654_qrup_neticeler (Sonuna .docx yazmağa ehtiyac yoxdur)">
+                </div>
+            </div>
+
             <div class="btn-group">
                 <button type="submit">Word Faylını Yarat və Yüklə</button>
             </div>
@@ -76,26 +82,16 @@
             const textElement = document.getElementById(textId);
 
             dropZone.addEventListener('click', () => inputElement.click());
-
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropZone.classList.add('dragover');
-            });
-
-            dropZone.addEventListener('dragleave', () => {
-                dropZone.classList.remove('dragover');
-            });
-
+            dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
             dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('dragover');
+                e.preventDefault(); dropZone.classList.remove('dragover');
                 if (e.dataTransfer.files.length) {
                     inputElement.files = e.dataTransfer.files;
                     textElement.innerText = "Yükləndi: " + e.dataTransfer.files[0].name;
                     textElement.style.color = "#27ae60";
                 }
             });
-
             inputElement.addEventListener('change', () => {
                 if (inputElement.files.length) {
                     textElement.innerText = "Yükləndi: " + inputElement.files[0].name;

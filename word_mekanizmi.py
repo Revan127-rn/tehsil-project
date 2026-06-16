@@ -1,20 +1,30 @@
 import docx
 
+# Qiymətləndirmə şkalası (Bunu öz məktəbinizin qaydalarına görə dəyişə bilərsən)
+def baldan_qiymet_hesabla(bal):
+    try:
+        # Balı ədədə çeviririk (vergülü nöqtəyə çevirib)
+        b = float(str(bal).replace(',', '.'))
+        
+        if b >= 71: return "5"
+        elif b >= 51: return "4"
+        elif b >= 31: return "3"
+        else: return "2"
+    except:
+        return "2" # Əgər bal oxunmazsa, avtomatik 2 yazır
+
 def word_faylini_doldur(word_fayli, axtarilan_fenn, ballar_siyahisi):
     doc = docx.Document(word_fayli)
-    # Şəkildəki əsas hesabat cədvəlini götürürük (sənəddəki ilk cədvəl)
     table = doc.tables[0]
     
     hedef_sutun_indeksi = -1
     baslangic_setir_indeksi = -1
     
-    # Cədvəlin yuxarı hissəsindəki başlıqları axtarırıq
-    for setir_idx in range(min(4, len(table.rows))):
+    # Fənnin adını və sütununu tapırıq
+    for setir_idx in range(min(5, len(table.rows))):
         for sutun_idx, xana in enumerate(table.rows[setir_idx].cells):
-            # Qısa ad yazılsa belə (məs: Rəqəmsal), tam adı tapacaq
             if axtarilan_fenn.lower() in xana.text.lower():
                 hedef_sutun_indeksi = sutun_idx
-                # Fənnin adından 2 sətir aşağıda tələbə məlumatları (B sütunu) başlayır
                 baslangic_setir_indeksi = setir_idx + 2 
                 break
         if hedef_sutun_indeksi != -1:
@@ -23,12 +33,21 @@ def word_faylini_doldur(word_fayli, axtarilan_fenn, ballar_siyahisi):
     if hedef_sutun_indeksi == -1:
         raise ValueError(f"Word cədvəlində '{axtarilan_fenn}' başlığı tapılmadı.")
         
-    # Balları ardıcıllıqla B sütununa yazırıq
+    # İndi həm B (Bal) həm də Q (Qiymət) sütunlarını doldururuq
     bal_idx = 0
     for setir_idx in range(baslangic_setir_indeksi, len(table.rows)):
         if bal_idx < len(ballar_siyahisi):
-            # Hədəf sütun B xanasının dəqiq yerləşdiyi sütundur
-            table.cell(setir_idx, hedef_sutun_indeksi).text = str(ballar_siyahisi[bal_idx])
+            bal = ballar_siyahisi[bal_idx]
+            qiymet = baldan_qiymet_hesabla(bal)
+            
+            # B sütununa balı yazırıq
+            table.cell(setir_idx, hedef_sutun_indeksi).text = str(bal)
+            
+            # Q sütununa (sağdakı xana) qiyməti yazırıq
+            # target_col + 1 o deməkdir ki, sağdakı sütuna yaz
+            if hedef_sutun_indeksi + 1 < len(table.rows[setir_idx].cells):
+                table.cell(setir_idx, hedef_sutun_indeksi + 1).text = str(qiymet)
+                
             bal_idx += 1
             
     return doc

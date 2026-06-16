@@ -1,9 +1,9 @@
 import docx
 
-# Qiymətləndirmə şkalası (Bunu öz məktəbinizin qaydalarına görə dəyişə bilərsən)
+# Qiymətləndirmə şkalası
 def baldan_qiymet_hesabla(bal):
     try:
-        # Balı ədədə çeviririk (vergülü nöqtəyə çevirib)
+        # Balı ədədə çeviririk (vergülü nöqtəyə çevirib hesablayırıq)
         b = float(str(bal).replace(',', '.'))
         
         if b >= 71: return "5"
@@ -40,11 +40,10 @@ def word_faylini_doldur(word_fayli, axtarilan_fenn, ballar_siyahisi):
             bal = ballar_siyahisi[bal_idx]
             qiymet = baldan_qiymet_hesabla(bal)
             
-            # B sütununa balı yazırıq
-            table.cell(setir_idx, hedef_sutun_indeksi).text = str(bal)
+            # B sütununa balı yazırıq (nöqtəni vergüllə əvəz edərək)
+            table.cell(setir_idx, hedef_sutun_indeksi).text = str(bal).replace('.', ',')
             
             # Q sütununa (sağdakı xana) qiyməti yazırıq
-            # target_col + 1 o deməkdir ki, sağdakı sütuna yaz
             if hedef_sutun_indeksi + 1 < len(table.rows[setir_idx].cells):
                 table.cell(setir_idx, hedef_sutun_indeksi + 1).text = str(qiymet)
                 
